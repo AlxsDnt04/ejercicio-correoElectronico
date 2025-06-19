@@ -1,8 +1,10 @@
 <?php
+require 'PHPMailer-master/src/PHPMailer.php';
+require 'PHPMailer-master/src/SMTP.php';
+require 'PHPMailer-master/src/Exception.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-require 'vendor/autoload.php';
 
 // Validar reCAPTCHA
 $recaptchaSecret = '6LfVgWQrAAAAALE9DZ6ECWg0eBnwrHLNhW_b_5_3'; // Reemplaza por tu clave secreta de reCAPTCHA
@@ -13,7 +15,7 @@ $recaptcha = file_get_contents(
 $recaptcha = json_decode($recaptcha);
 
 if (!$recaptcha->success) {
-    header('Location: formulario.html?msg=Captcha%20inv%C3%A1lido&ok=0');
+    header('Location: index.html?msg=Captcha%20inv%C3%A1lido&ok=0');
     exit;
 }
 
@@ -23,7 +25,7 @@ $email = trim($_POST['email'] ?? '');
 $mensaje = trim($_POST['mensaje'] ?? '');
 
 if (!$nombre || !$email || !$mensaje || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: formulario.html?msg=Datos%20inv%C3%A1lidos&ok=0');
+    header('Location: index.html?msg=Datos%20inv%C3%A1lidos&ok=0');
     exit;
 }
 
@@ -49,7 +51,9 @@ try {
     }
 
     $mail->send();
-    header('Location: formulario.html?msg=Correo%20enviado%20correctamente&ok=1');
+    header('Location: index.html?msg=Correo%20enviado%20correctamente&ok=1');
+    exit;
 } catch (Exception $e) {
-    header('Location: formulario.html?msg=Error%20al%20enviar%20el%20correo&ok=0');
+    header('Location: index.html?msg=Error%20al%20enviar%20el%20correo&ok=0');
+    exit;
 }
